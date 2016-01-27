@@ -7,10 +7,9 @@ xlang:
         - yarpc-node
 
 yarpc-go:
-    # image: yarpc/yarpc-go
-    image: tutum/hello-world
+    image: yarpc/yarpc-go
     ports:
-        - 80
+        - 80:8080  # TODO should listen on 80 internally
 
 yarpc-java:
     # image: yarpc/yarpc-java
