@@ -3,14 +3,27 @@ sudo: required
 language: go
 
 services:
-    - docker
+  - docker
+
+env:
+  global:
+    - secure: e/+9/ppUYRTBCWbUkdAANF1KBs2AJcmgmvNio+x9lGeC1Uq6LgFZjIy9ebCFYKKdkNZzLgIBWCVP55C0RQFr9bpd+fOawcm67db6WG10pPh+BR+qrSlkkX1SGOj+0VXDIsBWCj1qOuY0snhR9rIvLtbGFhUmoN3U+u2T8/bIdgK1CskXanCeh0bDwTYE+dVbLb5LGhV7ohhbTcevbTCan9C0bO3CF0Xd/K1bB33QSo21pdeB2JMhwOOhq9Wxx9mdyogZavNQc4k5xFMAkziEqtg5kpTPNYR7avtwme1FFFfXGEQtcoVbSyH0ajoP1Cj/tRdImU4CzbwIox0G1AIyxMPWX+wIFPE4XOCzpdud7cSU8ZI2K6/dmAJwKS0NIXjYZM2q2blQeTV2ED2G1SgL6cfbwceFxmS6TcxgsLwNCQEjLvCDPmLuJM54ePPd3lqQpOcG4c/bzFADwX7+rk3GvA42HMaSwfWt58fh7wyu3+YpXvnJKmiEAioZLrTFwss+fhp7vdYidq3TPfs3uXt3l8rcNTtY9bcDXjp2Qq25FCOxiPEWUGLR7/q63rRTZr/W1wdR9JYCKqh+GvjU2feKTX4K/za8s8QZfnBxKAcIX4kPUzMPS9wOkRFT5JW0Y/z6lqtwlJTB544LkRkTBfnlnifS6BoGDQ2rbntnSxvKA4M=
+    - secure: gRjc2fcm3sTePTQKSk+CgQuPIbwQH/TYFO+qEXaAF1R0e3wGMRXEUuioBXNcYNBtykuSsJFT1gqg5MXg9C+QSQFKDbLNHg4KhChr+GPt5dQ/V0Ywd5CISroDOCerg5dlyNKBSKjaREIp6YeAxhemcdd1t5Nga59xxMXGgETiv8X3rKMGQFQpYIDLjW5yjGBM7qBpfdgWk2JGzKHPDGzr9XbG1Wvk3v1ozyF9QtLC8vcoVgW5JoK4dW4ogIR+Oe9XTNQ92FUI+bzw3nlgu8N5ws81419PwvdST0IHr5M0HFwCp3ON0ZAZIRC+Y5vv3DRsBT9lgkIk5oqA/DqOXCgT4z9+5hp5YJEw7I0Sa+WRg/9FOLxLhrD7P95hqEMM+H0V/zJTaYdW7t5vvbPnbTgUOS897E5+u4kAF2rGIURKmPgKmy3xKA4ypHSOmLqy8JhScNLSumSC3cWpWaMgezaWsXHOpo1LAbQRySm1yBjdmC2i3dVicu55xuJAh9lMehhUHzTdharrd0yWIjbdAsCEklil1jiKBGGmCwfRkA2Xg6U0D4qtaV62aLKl/hsPnQ5faCyIoUz49fQle77flH5A27ULCMs/kKRvg6LDgeXt72WKb/HEQQ1BGMLp7MJxogVhhUdaPYjlHt/GLyfjleFZKyMF83TSoUou/h4y949qqSY=
+    - secure: m8hwu92c5iRTUYKdbt2AZ4VDiu3ktzbXtc5xVlbEV+ggsbEIW5kKEsz4pd7rDIeX62KE5udkm09Fss0LQanTMrMm/1l9IAXpKxzlZ5So+UQgdOk0vOm9g/iI7aO/CMwNM7wTuzfWa1sMvurnUA5Sq6qnIN0RPKcTvA+XdEnz3Smsudp/nDzDazOGeNlGFi0JdrSJV6YlpB6hcUvCdJcx+9HaonbdZwrBk7zqrwuJTlhHdioE+oYCCqFp3wBBrg3vGm9hWTczAY4ylNwetlD0555K5QSRGg6KeYAsHGIGkLO5B1vvaWaYRR15sqG8UauBP7Q0v470HA6KOqNWwMlcmicp585GMXUaOpYiY6K+VhwQ/2FW+0Sej9TJZU0Z5Csqaockb/b5+TSmxhPIxLGM/u6H/3L5cMic8wUhqAbs1lbjwEC1053ChATtpGSc9kHZtbpSCEr2cufoefoMogLTMOhtAqU7Ugeh/rB/oDS/WVPaFXnpmq56TK1lqFNHOPdIR2NC9gfBefTvzcAHCBj7knShygTMou4lgtCjX7JjUMsVma3jd5L/+CH3sR0UjrQF0Glgwu6TKL4awgI66FFQ9H3mUz9LApwaNmcJYB2EZtjP+gAvyf/hscbhefky/MnVYuY98MaaURYiDd/R1y8LBCN/mvjTXR3d610Zkb/Icvg=
+    - COMMIT=${TRAVIS_COMMIT::8}
 
 install:
-    - make install
+  - make install
 
 script:
-    - make test
-    - make xlang
+  - make test
+  - make xlang
 
 after_success:
-    - make publish
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - export REPO=yarpc/xlang
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
+  - docker build -f Dockerfile -t $REPO:$COMMIT .
+  - docker tag $REPO:$COMMIT $REPO:$TAG
+  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
