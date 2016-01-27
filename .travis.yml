@@ -1,0 +1,17 @@
+sudo: required
+
+language: go
+
+services:
+    - docker
+
+install:
+    - make install
+
+script:
+    - make test
+    - make xlang
+
+# TODO after_success:
+# publish container to docker registry
+# at yarpc/yarpc-go:branch-$TRAVIS_BRANCH
