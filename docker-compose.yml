@@ -1,6 +1,5 @@
 xlang:
-    # image: yarpc/xlang
-    image: hello-world
+    build: .
     links:
         - yarpc-go
         - yarpc-java
@@ -8,9 +7,10 @@ xlang:
         - yarpc-node
 
 yarpc-go:
-    build: .
+    # image: yarpc/yarpc-go
+    image: tutum/hello-world
     ports:
-        - 8080
+        - 80
 
 yarpc-java:
     # image: yarpc/yarpc-java
