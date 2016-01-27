@@ -12,9 +12,5 @@ script:
     - make test
     - make xlang
 
-# TODO after_success:
-# publish container to docker registry
-# at yarpc/yarpc-go:branch-$TRAVIS_BRANCH
-#
 after_success:
-    - scripts/publish-to-docker-registry.sh
+    - make publish

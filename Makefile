@@ -14,3 +14,8 @@ test:
 .PHONY: xlang
 xlang:
 	docker-compose run xlang
+
+
+.PHONY: publish
+publish:
+	./scripts/publish-to-docker-registry.sh
