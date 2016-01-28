@@ -1,31 +1,78 @@
-// [Environment variables](http://en.wikipedia.org/wiki/Environment_variable)
-// are a universal mechanism for [conveying configuration
-// information to Unix programs](http://www.12factor.net/config).
-// Let's look at how to set, get, and list environment variables.
-
 package main
 
-import "os"
-import "strings"
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+)
 
 func main() {
 
-	// To set a key/value pair, use `os.Setenv`. To get a
-	// value for a key, use `os.Getenv`. This will return
-	// an empty string if the key isn't present in the
-	// environment.
-	os.Setenv("FOO", "1")
-	fmt.Println("FOO:", os.Getenv("FOO"))
-	fmt.Println("BAR:", os.Getenv("BAR"))
+	clients := strings.Split(os.Getenv("XLANG_CLIENTS"), ",")
+	servers := strings.Split(os.Getenv("XLANG_SERVERS"), ",")
+	behaviors := strings.Split(os.Getenv("XLANG_BEHAVIORS"), ",")
 
-	// Use `os.Environ` to list all key/value pairs in the
-	// environment. This returns a slice of strings in the
-	// form `KEY=value`. You can `strings.Split` them to
-	// get the key and value. Here we print all the keys.
-	fmt.Println()
-	for _, e := range os.Environ() {
-		pair := strings.Split(e, "=")
-		fmt.Println(pair[0])
+	matrix := Matrix{
+		Clients:   clients,
+		Servers:   servers,
+		Behaviors: behaviors,
 	}
+
+	beginMatrixTest(matrix)
+}
+
+type Matrix struct {
+	Clients   []string
+	Servers   []string
+	Behaviors []string
+}
+
+func beginMatrixTest(matrix Matrix) {
+
+	for _, client := range matrix.Clients {
+		for _, server := range matrix.Servers {
+			for _, behavior := range matrix.Behaviors {
+
+				testCase := TestCase{
+					Client:   client,
+					Server:   server,
+					Behavior: behavior,
+				}
+
+				executeTestCase(testCase)
+			}
+		}
+	}
+}
+
+type TestCase struct {
+	Client   string
+	Server   string
+	Behavior string
+}
+
+func executeTestCase(testCase TestCase) {
+
+	// start with base url
+	callUrl, err := url.Parse(fmt.Sprintf("http://%v", testCase.Client))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// build query params
+	params := url.Values{}
+	params.Add("server", testCase.Server)
+	params.Add("behavior", testCase.Behavior)
+	callUrl.RawQuery = params.Encode()
+
+	// make request to test client
+	resp, err := http.Get(callUrl.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(resp.StatusCode, callUrl.String())
 }

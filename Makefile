@@ -16,6 +16,7 @@ xlang:
 	docker-compose run xlang
 
 
-.PHONY: publish
-publish:
-	./scripts/publish-to-docker-registry.sh
+.PHONY: run
+run:
+	docker-compose build xlang
+	docker-compose run xlang
