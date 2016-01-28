@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -56,23 +57,25 @@ type TestCase struct {
 
 func executeTestCase(testCase TestCase) {
 
-	// start with base url
 	callUrl, err := url.Parse(fmt.Sprintf("http://%v:8080/", testCase.Client))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// build query params
 	params := url.Values{}
 	params.Add("server", testCase.Server)
 	params.Add("behavior", testCase.Behavior)
 	callUrl.RawQuery = params.Encode()
 
-	// make request to test client
 	resp, err := http.Get(callUrl.String())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(resp.StatusCode, callUrl.String())
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(fmt.Sprintf("%v - %v - %v", resp.StatusCode, callUrl.String(), string(body)))
 }
