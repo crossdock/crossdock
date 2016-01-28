@@ -57,7 +57,7 @@ type TestCase struct {
 func executeTestCase(testCase TestCase) {
 
 	// start with base url
-	callUrl, err := url.Parse(fmt.Sprintf("http://%v", testCase.Client))
+	callUrl, err := url.Parse(fmt.Sprintf("http://%v:8080/", testCase.Client))
 	if err != nil {
 		log.Fatal(err)
 	}
