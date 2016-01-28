@@ -77,5 +77,5 @@ func executeTestCase(testCase TestCase) {
 		log.Fatal(err)
 	}
 
-	fmt.Println(fmt.Sprintf("%v - %v - %v", resp.StatusCode, callUrl.String(), string(body)))
+	fmt.Printf("%v - %v - %s\n", resp.StatusCode, callUrl, body)
 }
