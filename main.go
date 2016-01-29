@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -16,6 +17,8 @@ func main() {
 		Servers:   servers,
 		Behaviors: behaviors,
 	}
+
+	time.Sleep(1 * time.Second)
 
 	results := BeginMatrixTest(matrix)
 
