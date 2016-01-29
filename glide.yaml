@@ -1,0 +1,3 @@
+package: github.com/yarpc/xlang
+import:
+- package: github.com/olekukonko/tablewriter
