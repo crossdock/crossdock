@@ -10,6 +10,7 @@ services:
 
 env:
   global:
+    - CGO15VENDOREXPERIMENT=1
     - COMMIT=${TRAVIS_COMMIT::8}
     - secure: HnDi8D6oCwsoSenLh0TJZ3eOKq/Ssk0krhNxcSzKmVeRoOVPewriPUkQFXuC0bACmoQuNkgx+o7eACXMDa48KOzPtTogms4uYb242h3ojcL6lKCEmtoj/SYtl6cTZweSJGcEDhaolP4vtdq0uDydS6rCobZTnJUhMdq5ZQYDwPoEZ0IUcAp2t+jCDRzP9O5j16g1DaQ1snXQFLJe04Cts6aRZmX2V3LYZJuV/TgPtgXQ+SDnpN6j05D49KYZRToTK50EQbW0axD/IJ5WKnUKbRYDuunBtqmh1XkhRu/DaX0xEE6OkfP2iLQXh66lkKgfTDYLMmmGDiAB83Bnls6xJBiOZF7+MhX+ViI3hWmafr5rqU4iMT9J+/EonB5fZWCom45d2qIIyhw1cneYLMhA5JLtvrUTmHKSTYLpS3d7OTVDZ2uvTmSGDKWa2dh/5/9PJWZbevftYbS7E3Io6Z0l/C4/E1irFI6vSLbVR/ByjtoFa+Qz2S8+hCiQQq4xp6y8pA4hVcQdM/FDubHOW/PGbbrq9hYVaYqfPI6b3p4vDQd5L+Wjc3FW3ljmRYs/O223P6UaU31hkB+CdUV/R+DQb4Wu5Gp8TXnPQALNttHeho64jozsa34TDpR4+Cx/GUu1do2CVG0lzX7jmOS5lASmgRnxUdjiRXL3hEGDnsdYHh4= # DOCKER_EMAIL
     - secure: X0YVAt4Vs+rTAvA+gFJ1ZwjLjn0o6wqmGapZ26kgOPlZero78JJqQtLnjx4DuJPuO8y90Qeib4VtwV4kA9Z2PmVvXOanuaR7h/fWyyGjKXbLicl14sgnZdKMWorL5JuvPZ3kLBuJMnjBMipx6sSz7USwiluQV4+jOM3pGX9mbXT2I23yFLOk57ZQn3dLcE8f8hSf/chMB8lJij046jbZWVmm/n64Y03ZW/mQnoxK43M2yBjXgYhAYMZBpFGDHY/g0/fqB5n5PTCukxDs9nKVS6UZ4lcPOm6RsvAhLCMjyzR/mhEJd9jP6t68ELeq2mgSABbUF0387ZS02h5V/DiRd6XACa1wKUVzIFM+d6c+muHAEQB3YfYTjd5mKhhhSv6SkEKvugdFhIKyvyxBSgIWBaLuF46H4duCfPZ+S78DYTM54XkND98eKsxsEerrOdOcviEhDQT+mO34hai8E2Nc67RoiQj/Za/1jMzBgEXsC+8nlXQb6oLhowzt5b+fILbGDf0KrdZ3Ex124c74tKYYlNKkWXQS+8RjNbIfpHa/soxVWY7c5xE5WpFXn3J4Ged6FbM3pURDX80kJTojohy5OpFM068iXG8ZQKz3JrlYgPsrWbL5/SOWkaEDMWD8tMY6crAaogse+wVcB2u5q5VLX4NPOWUTRzrK/w0X2GubtWw= # DOCKER_USER
@@ -26,7 +27,7 @@ after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=yarpc/xlang
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-  - CGO15VENDOREXPERIMENT=1 GO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+  - GO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
   - docker images
   - docker tag $REPO:$COMMIT $REPO:$TAG
