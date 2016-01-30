@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 )
 
@@ -17,8 +16,8 @@ func main() {
 
 	// wait on deps to start. use lib directly when ready:
 	// @see https://github.com/Barzahlen/waitforservices/issues/4
-	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n", clients)
-	ExecuteToOut(exec.Command("waitforservices", "-httpport=8080"))
+	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n\n", clients)
+	Wait(clients, 30)
 
 	matrix := Matrix{
 		Clients:   clients,
@@ -26,7 +25,7 @@ func main() {
 		Behaviors: behaviors,
 	}
 
-	fmt.Println("Beginning Matrix Test:")
+	fmt.Println("\nBeginning Matrix Test:")
 	results := BeginMatrixTest(matrix)
 
 	OutputResults(results)
