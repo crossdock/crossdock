@@ -21,7 +21,7 @@ install:
 
 script:
   - make test
-  - make xlang
+  - make xlang-fresh
 
 after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
