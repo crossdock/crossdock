@@ -22,6 +22,7 @@ xlang:
 xlang-fresh:
 	docker-compose kill
 	docker-compose rm -f
+	docker-compose pull
 	docker-compose build
 	docker-compose run xlang
 
