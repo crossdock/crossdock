@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -17,6 +19,10 @@ func main() {
 		Behaviors: behaviors,
 	}
 
+	fmt.Println("Waiting 1 second for test clients to come online")
+	time.Sleep(1 * time.Second)
+
+	fmt.Println("Begining matrix of tests")
 	results := BeginMatrixTest(matrix)
 
 	OutputResults(results)
