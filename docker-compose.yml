@@ -14,6 +14,8 @@ yarpc-go:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_SLEEP=2
 
 yarpc-java:
     image: breerly/hello-server
