@@ -24,12 +24,12 @@ script:
   - make xlang
 
 after_success:
-  - echo $GO15VENDOREXPERIMENT
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=yarpc/xlang
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-  - GO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
+  - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
+  - docker run $REPO:$COMMIT
   - docker images
   - docker tag $REPO:$COMMIT $REPO:$TAG
   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
