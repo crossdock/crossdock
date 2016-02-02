@@ -11,19 +11,18 @@ import (
 	"time"
 )
 
-func Wait(clients []string, timeout int) {
-
+// Wait for hosts to become ready
+func Wait(hosts []string, timeout int) {
 	begin := time.Now()
-
 	var wg sync.WaitGroup
 	cancel := make(chan struct{})
 
-	for _, client := range clients {
+	for _, host := range hosts {
 		wg.Add(1)
 		go func(host string) {
-			WaitForHttpRequest(host, cancel)
+			WaitForHTTPRequest(host, cancel)
 			wg.Done()
-		}(fmt.Sprintf("%s:8080", client))
+		}(fmt.Sprintf("%s:8080", host))
 	}
 
 	timer := time.AfterFunc(time.Duration(timeout)*time.Second, func() {
@@ -32,12 +31,6 @@ func Wait(clients []string, timeout int) {
 
 	wg.Wait()
 
-	// There's a race here that might result in assuming that a timeout happend
-	// although none happend. It appears when the timer fires after the connection
-	// succeeded, but before the check via Stop() below.
-	// That shouldn't hap\npen very often and the service was pretty short of timing out
-
-	// anyway, so I guess that's ok for now.
 	if !timer.Stop() {
 		log.Printf("Error: One or more services timed out after %d second(s)", timeout)
 		os.Exit(1)
@@ -45,7 +38,8 @@ func Wait(clients []string, timeout int) {
 	fmt.Printf("\nAll services are up after %v!\n", time.Now().Sub(begin))
 }
 
-func WaitForHttpRequest(host string, cancel <-chan struct{}) {
+// WaitForHTTPRequest polls host until it can make a request
+func WaitForHTTPRequest(host string, cancel <-chan struct{}) {
 	url := url.URL{
 		Scheme: "http",
 		Host:   host,
