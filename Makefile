@@ -5,12 +5,12 @@ project := xlang
 install:
 	glide --version || go get github.com/Masterminds/glide
 	GO15VENDOREXPERIMENT=1 glide install
-	GO15VENDOREXPERIMENT=1 go build `GO15VENDOREXPERIMENT=1 glide novendor`
+	GO15VENDOREXPERIMENT=1 go build `glide novendor`
 
 
 .PHONY: test
 test:
-	GO15VENDOREXPERIMENT=1 go test `GO15VENDOREXPERIMENT=1 glide novendor`
+	GO15VENDOREXPERIMENT=1 go test `glide novendor`
 
 
 .PHONY: xlang
