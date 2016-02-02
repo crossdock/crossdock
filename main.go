@@ -1,32 +1,15 @@
 package main
 
-import (
-	"fmt"
-	"os"
-	"strings"
-)
+import "fmt"
 
 func main() {
+	matrix := ReadMatrixFromEnviron()
 
-	fmt.Printf("\nXLANG COMMENCING...\n\n")
+	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n\n", matrix.Clients)
+	Wait(matrix.Clients, 30)
 
-	clients := strings.Split(os.Getenv("XLANG_CLIENTS"), ",")
-	servers := strings.Split(os.Getenv("XLANG_SERVERS"), ",")
-	behaviors := strings.Split(os.Getenv("XLANG_BEHAVIORS"), ",")
+	fmt.Println("Begining matrix of tests")
+	results := Execute(matrix)
 
-	// wait on deps to start. use lib directly when ready:
-	// @see https://github.com/Barzahlen/waitforservices/issues/4
-	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n\n", clients)
-	Wait(clients, 30)
-
-	matrix := Matrix{
-		Clients:   clients,
-		Servers:   servers,
-		Behaviors: behaviors,
-	}
-
-	fmt.Println("\nBeginning Matrix Test:")
-	results := BeginMatrixTest(matrix)
-
-	OutputResults(results)
+	Output(results)
 }
