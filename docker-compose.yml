@@ -7,8 +7,9 @@ xlang:
         - yarpc-node
     environment:
         - XLANG_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - XLANG_SERVERS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - XLANG_BEHAVIORS=call,not_found
+        - XLANG_DIMENSION_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node
+        - XLANG_DIMENSION_BEHAVIOR=call,not_found
+        - XLANG_DIMENSION_TRANSPORT=tchannel,http
 
 yarpc-go:
     image: breerly/hello-server

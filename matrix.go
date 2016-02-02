@@ -8,71 +8,70 @@ import (
 	"net/url"
 )
 
+// Dimension represents combinational args to be passed to the test clients
+type Dimension struct {
+	Name   string
+	Values []string
+}
+
+// Matrix describes the entirety of the test program
 type Matrix struct {
-	Clients   []string
-	Servers   []string
-	Behaviors []string
+	Clients    []string
+	Dimensions []Dimension
 }
 
-type Results []Result
-
-func BeginMatrixTest(matrix Matrix) Results {
-
-	len := len(matrix.Clients) * len(matrix.Servers) * len(matrix.Behaviors)
-	results := make(Results, 0, len)
-
-	for _, client := range matrix.Clients {
-		for _, server := range matrix.Servers {
-			for _, behavior := range matrix.Behaviors {
-
-				testCase := TestCase{
-					Client:   client,
-					Server:   server,
-					Behavior: behavior,
-				}
-
-				result := ExecuteTestCase(testCase)
-				results = append(results, result)
-			}
-		}
-	}
-
-	return results
-}
-
-type TestCase struct {
-	Client   string
-	Server   string
-	Behavior string
-}
-
+// Result contains replies from test clients
 type Result struct {
 	TestCase TestCase
 	Status   Status
 	Response string
 }
 
+// Status is an enum that represents test success/failure
 type Status int
 
 const (
+	// Success indicates a client's TestCase passed
 	Success Status = 1 + iota
+
+	// Failed indicates a client's TestCase did not pass
 	Failed
+
+	// Skipped indicates a client' TestCase did not run
 	Skipped
 )
 
-func ExecuteTestCase(testCase TestCase) Result {
+// Execute the test program for a given Matrix
+func Execute(matrix Matrix) []Result {
+	cases := Collect(matrix)
+	results := ExecuteCases(cases)
+	return results
+}
 
-	callUrl, err := url.Parse(fmt.Sprintf("http://%v:8080/", testCase.Client))
+// ExecuteCases runs a list of TestCase's
+func ExecuteCases(cases []TestCase) []Result {
+	var results []Result
+	for _, c := range cases {
+		result := ExecuteCase(c)
+		results = append(results, result)
+	}
+	return results
+}
+
+// ExecuteCase fires an HTTP request to the test client
+func ExecuteCase(c TestCase) Result {
+	callURL, err := url.Parse(fmt.Sprintf("http://%v:8080/", c.Client))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	params := url.Values{}
-	params.Add("server", testCase.Server)
-	params.Add("behavior", testCase.Behavior)
-	callUrl.RawQuery = params.Encode()
+	args := url.Values{}
+	for k, v := range c.Arguments {
+		args.Add(k, v)
+	}
+	callURL.RawQuery = args.Encode()
 
-	resp, err := http.Get(callUrl.String())
+	resp, err := http.Get(callURL.String())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,7 +87,7 @@ func ExecuteTestCase(testCase TestCase) Result {
 	}
 
 	return Result{
-		TestCase: testCase,
+		TestCase: c,
 		Status:   status,
 		Response: string(body),
 	}
