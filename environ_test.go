@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,19 +9,16 @@ import (
 
 func TestReadMatrixFromEnviron(t *testing.T) {
 
-	clients := []string{"yarpc-go", "yarpc-node", "yarpc-browser"}
-	servers := []string{"yarpc-go", "yarpc-node"}
-	transports := []string{"http", "tchannel"}
-
-	os.Setenv("XLANG_CLIENTS", strings.Join(clients, ","))
-	os.Setenv("XLANG_DIMENSION_SERVER", strings.Join(servers, ","))
-	os.Setenv("XLANG_DIMENSION_TRANSPORT", strings.Join(transports, ","))
+	os.Setenv("XLANG_CLIENTS", "yarpc-go,yarpc-node,yarpc-browser")
+	os.Setenv("XLANG_DIMENSION_SERVER", "yarpc-go,yarpc-node")
+	os.Setenv("XLANG_DIMENSION_TRANSPORT", "http,tchannel")
 
 	matrix := ReadMatrixFromEnviron()
 
-	assert.Equal(t, matrix.Clients, clients)
+	assert.Equal(t, matrix.Clients, []string{"yarpc-go", "yarpc-node", "yarpc-browser"})
+
 	assert.Equal(t, matrix.Dimensions, []Dimension{
-		{Name: "server", Values: servers},
-		{Name: "transport", Values: transports},
+		{Name: "server", Values: []string{"yarpc-go", "yarpc-node"}},
+		{Name: "transport", Values: []string{"http", "tchannel"}},
 	})
 }
