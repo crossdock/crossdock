@@ -8,9 +8,9 @@ import (
 )
 
 func TestReadMatrixFromEnviron(t *testing.T) {
-	os.Setenv("XLANG_CLIENTS", "yarpc-go,yarpc-node,yarpc-browser")
-	os.Setenv("XLANG_DIMENSION_SERVER", "yarpc-go,yarpc-node")
-	os.Setenv("XLANG_DIMENSION_TRANSPORT", "http,tchannel")
+	os.Setenv("CROSSDOCK_CLIENTS", "yarpc-go,yarpc-node,yarpc-browser")
+	os.Setenv("CROSSDOCK_AXIS_SERVER", "yarpc-go,yarpc-node")
+	os.Setenv("CROSSDOCK_AXIS_TRANSPORT", "http,tchannel")
 
 	matrix := ReadMatrixFromEnviron()
 

@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-const clientsKey = "XLANG_CLIENTS"
-const dimensionKeyPrefix = "XLANG_DIMENSION_"
+const clientsKey = "CROSSDOCK_CLIENTS"
+const dimensionKeyPrefix = "CROSSDOCK_AXIS_"
 
-// ReadMatrixFromEnviron creates a Matrix by looking for XLANG_ environment vars
+// ReadMatrixFromEnviron creates a Matrix by looking for CROSSDOCK_ environment vars
 func ReadMatrixFromEnviron() Matrix {
 	clients := strings.Split(os.Getenv(clientsKey), ",")
 	var dimensions []Dimension
