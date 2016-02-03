@@ -1,20 +1,20 @@
-# yarpc/xlang [![Build Status](https://travis-ci.org/yarpc/xlang.svg?branch=master)](https://travis-ci.org/yarpc/xlang)
+# `yarpc/xlang` [![Build Status](https://travis-ci.org/yarpc/xlang.svg?branch=master)](https://travis-ci.org/yarpc/xlang)
 
-A 2mb Docker appliance for running cross-repo integration tests; xlang is:
+A 2mb Docker appliance for running cross-repo integration tests; `yarpc/xlang` is:
 
 * Portable - runs anywhere Docker is installed, eg Travis & locally.
 * General - can be used to test sets of libraries and microservices.
 * Flexible - test all combinations of behaviors using custom matrix dimensions.
-* Decentralized - each repo can configure and run Xlang independently from the others.
-* Light - run Xlang for every commit on every repo in parallel.
+* Decentralized - each repo can configure and run `yarpc/xlang` independently from the others.
+* Light - run `yarpc/xlang` for every commit on every repo in parallel.
 * Easy - run integration tests on a large project without installing every component.
 
 ## How It Works
 
-Xlang is [published in Docker Hub](https://hub.docker.com/r/yarpc/xlang/) and is
+`yarpc/xlang` is [published in Docker Hub](https://hub.docker.com/r/yarpc/xlang/) and is
 meant to be used with [Docker Compose](https://docs.docker.com/compose/) directly from your repos.
 
-Given the following `docker-compose.yml`, Xlang will initiate an integration test for clients
+Given the following `docker-compose.yml`, `yarpc/xlang` will initiate an integration test for clients
 `alpha` and `omega` for every combination of `behavior` and `speed`:
 
 ```yml
@@ -45,7 +45,7 @@ omega:
         - HELLO_MESSAGE=ok
 ```
 
-Run the xlang Docker Compose target:
+Run `yarpc/xlang`:
 
 ```
 $ docker-compose xlang
@@ -67,7 +67,7 @@ Beginning matrix of tests...
 ## How To Use
 
 1. [Write Test Client](docs/write-test-client.md)
-2. [Run Xlang](docs/run-xlang.md)
+2. [Run `yarpc/xlang`](docs/run-xlang.md)
 3. [Publish Test Client](docs/publish-test-client.md)
 4. [Integrate Other Repos](docs/integrate-other-repos.md)
 5. [Add Other Test Dimensions](docs/add-other-dimensions.md)
