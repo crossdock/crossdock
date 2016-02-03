@@ -5,7 +5,7 @@
 To run Crossdock, we'll need to configure our `docker-compose.yml`:
 
 ```yml
-xlang:
+crossdock:
     image: yarpc/crossdock
     links:
         - client
@@ -19,7 +19,7 @@ client:
         - 8080
 ```
 
-In the configuration above, the `xlang:` entry can be read as:
+In the configuration above, the `crossdock:` entry can be read as:
 
 > Define a container named crossdock that runs the [yarpc/crossdock](https://hub.docker.com/r/yarpc/crossdock/) image,
 > assigns our Test Client as a runtime dependency,
@@ -54,6 +54,6 @@ Beginning matrix of tests...
 The above output can be read as:
 
 > For every Test Client configured in our `docker-compose.yml` file,
-> xlang issued a test request to each for every Behavior defined.
+> Crossdock issued a test request to each for every Behavior defined.
 
 [Publish Test Client →](publish-test-client.md)

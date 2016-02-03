@@ -1,4 +1,4 @@
-[← Add Other Test Dimensions](add-other-dimensions.md)
+[← Add Other Test Axis](add-other-axis.md)
 
 # Run During Continuous Integration
 

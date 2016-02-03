@@ -70,5 +70,5 @@ Beginning matrix of tests...
 2. [Run Crossdock](docs/run-crossdock.md)
 3. [Publish Test Client](docs/publish-test-client.md)
 4. [Integrate Other Repos](docs/integrate-other-repos.md)
-5. [Add Other Test Dimensions](docs/add-other-dimensions.md)
+5. [Add Other Test Axis](docs/add-other-axis.md)
 6. [Run During Continuous Integration](docs/add-to-ci.md)
