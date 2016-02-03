@@ -1,12 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	matrix := ReadMatrixFromEnviron()
 
 	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n\n", matrix.Clients)
-	Wait(matrix.Clients, 30)
+	Wait(matrix.Clients, time.Duration(30)*time.Second)
 
 	fmt.Println("Begining matrix of tests")
 	results := Execute(matrix)

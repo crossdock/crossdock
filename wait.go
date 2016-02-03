@@ -12,7 +12,7 @@ import (
 )
 
 // Wait for hosts to become ready
-func Wait(hosts []string, timeout int) {
+func Wait(hosts []string, timeout time.Duration) {
 	begin := time.Now()
 	var wg sync.WaitGroup
 	cancel := make(chan struct{})
@@ -25,7 +25,7 @@ func Wait(hosts []string, timeout int) {
 		}(fmt.Sprintf("%s:8080", host))
 	}
 
-	timer := time.AfterFunc(time.Duration(timeout)*time.Second, func() {
+	timer := time.AfterFunc(timeout, func() {
 		close(cancel)
 	})
 
