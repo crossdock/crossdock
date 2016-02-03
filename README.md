@@ -14,8 +14,7 @@ A 2mb Docker appliance for running cross-repo integration tests; Xlang is:
 Xlang is [published in Docker Hub](https://hub.docker.com/r/yarpc/xlang/) and is
 meant to be used with [Docker Compose](https://docs.docker.com/compose/) directly from your repos.
 
-Given the following `docker-compose.yml`, Xlang will initiate an integration test for clients
-`alpha` and `omega` for every combination of `behavior` and `speed`:
+Given the following `docker-compose.yml`:
 
 ```yml
 xlang:
@@ -45,7 +44,8 @@ omega:
         - HELLO_MESSAGE=ok
 ```
 
-Run Xlang:
+Running Xlang will initiate tests for clients `alpha` and `omega` for
+every combination of `behavior` and `speed`:
 
 ```
 $ docker-compose run xlang
