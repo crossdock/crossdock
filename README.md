@@ -28,7 +28,7 @@ xlang:
         - XLANG_DIMENSION_BEHAVIOR=dance,run
         - XLANG_DIMENSION_SPEED=fast,slow
 
-alpha: &alpha
+alpha:
     image: breerly/hello-server
     ports:
         - 8080
@@ -36,7 +36,13 @@ alpha: &alpha
         - HELLO_PORT=8080
         - HELLO_MESSAGE=ok
 
-omega: *alpha
+omega:
+    image: breerly/hello-server
+    ports:
+        - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 ```
 
 Run the xlang Docker Compose target:
