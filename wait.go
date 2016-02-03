@@ -35,7 +35,7 @@ func Wait(hosts []string, timeout time.Duration) {
 		log.Printf("Error: One or more services timed out after %d second(s)", timeout)
 		os.Exit(1)
 	}
-	fmt.Printf("\nAll services are up after %v!\n", time.Now().Sub(begin))
+	fmt.Printf("\nAll services are up after %v!\n", time.Since(begin))
 }
 
 // WaitForHTTPRequest polls host until it can make a request
