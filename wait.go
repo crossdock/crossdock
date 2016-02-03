@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"sync"
 	"time"
 )
@@ -32,8 +31,7 @@ func Wait(hosts []string, timeout time.Duration) {
 	wg.Wait()
 
 	if !timer.Stop() {
-		log.Printf("Error: One or more services timed out after %d second(s)", timeout)
-		os.Exit(1)
+		log.Fatalf("Error: One or more services timed out after %d second(s)", timeout)
 	}
 	fmt.Printf("\nAll services are up after %v!\n", time.Since(begin))
 }
