@@ -15,7 +15,7 @@ func TestReadMatrixFromEnviron(t *testing.T) {
 	matrix := ReadMatrixFromEnviron()
 
 	assert.Equal(t, matrix.Clients, []string{"yarpc-go", "yarpc-node", "yarpc-browser"})
-	assert.Equal(t, matrix.Dimensions, []Dimension{
+	assert.Equal(t, matrix.Axes, []Axis{
 		{Name: "server", Values: []string{"yarpc-go", "yarpc-node"}},
 		{Name: "transport", Values: []string{"http", "tchannel"}},
 	})

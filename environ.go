@@ -6,33 +6,33 @@ import (
 )
 
 const clientsKey = "CROSSDOCK_CLIENTS"
-const dimensionKeyPrefix = "CROSSDOCK_AXIS_"
+const axisKeyPrefix = "CROSSDOCK_AXIS_"
 
 // ReadMatrixFromEnviron creates a Matrix by looking for CROSSDOCK_ environment vars
 func ReadMatrixFromEnviron() Matrix {
 	clients := strings.Split(os.Getenv(clientsKey), ",")
-	var dimensions []Dimension
+	var axes []Axis
 
 	for _, e := range os.Environ() {
-		if !strings.HasPrefix(e, dimensionKeyPrefix) {
+		if !strings.HasPrefix(e, axisKeyPrefix) {
 			continue
 		}
-		d := strings.TrimPrefix(e, dimensionKeyPrefix)
+		d := strings.TrimPrefix(e, axisKeyPrefix)
 
 		pair := strings.SplitN(d, "=", 2)
 		key := strings.ToLower(pair[0])
 		value := strings.Split(pair[1], ",")
 
-		dimension := Dimension{
+		axis := Axis{
 			Name:   key,
 			Values: value,
 		}
-		dimensions = append(dimensions, dimension)
+		axes = append(axes, axis)
 	}
 
 	matrix := Matrix{
-		Clients:    clients,
-		Dimensions: dimensions,
+		Clients: clients,
+		Axes:    axes,
 	}
 
 	return matrix
