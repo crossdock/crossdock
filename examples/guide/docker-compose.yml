@@ -1,0 +1,20 @@
+xlang:
+    image: yarpc/xlang
+    links:
+        - client
+        - newclient
+    environment:
+        - XLANG_CLIENTS=client,newclient
+        - XLANG_DIMENSION_BEHAVIOR=dance,run
+        - XLANG_DIMENSION_SPEED=fast,slow
+
+client:
+    build: .
+    ports:
+        - 8080
+
+newclient:
+    image: breerly/hello-server
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
