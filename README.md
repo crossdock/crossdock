@@ -48,7 +48,7 @@ omega:
 Run `yarpc/xlang`:
 
 ```
-$ docker-compose xlang
+$ docker-compose run xlang
 
 Beginning matrix of tests...
 

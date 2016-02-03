@@ -27,11 +27,17 @@ func main() {
 		case "dance":
 			w.Write([]byte("ok\n"))
 			return
-		}
 
-		// give a 404 when no behavior defined,
-		// xlang will mark every 404 test case as "skipped"
-		http.NotFound(w, r)
+		case "run":
+			// do something to test the "run" behavior...
+			w.Write([]byte("ok\n"))
+			return
+
+		default:
+			// give a 404 when test is not implemented,
+			// xlang will mark every 404 test case as "skipped"
+			http.NotFound(w, r)
+		}
 	})
 	http.ListenAndServe(":8080", nil)
 }
