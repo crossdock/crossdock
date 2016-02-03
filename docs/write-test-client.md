@@ -1,6 +1,7 @@
 # Write Test Client
 
 A test client is just a HTTP server written in any language, that listens on port `8080`.
+Xlang executes the test matrix against each client.
 
 The following illustrates an over-simplified test client written in Go (available in the `example/client.go`):
 
@@ -10,7 +11,7 @@ package main
 import "net/http"
 
 func main() {
-	// xlang makes all calls to http://<test-client>:8080/
+	// Xlang makes all calls to http://<test-client>:8080/
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// custom arguments, called dimensions, are configured in
 		// docker-compose.yml and then passed as query params like so:
