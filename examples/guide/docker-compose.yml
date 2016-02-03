@@ -1,0 +1,20 @@
+crossdock:
+    image: yarpc/crossdock
+    links:
+        - client
+        - newclient
+    environment:
+        - CROSSDOCK_CLIENTS=client,newclient
+        - CROSSDOCK_AXIS_BEHAVIOR=dance,run
+        - CROSSDOCK_AXIS_SPEED=fast,slow
+
+client:
+    build: .
+    ports:
+        - 8080
+
+newclient:
+    image: breerly/hello-server
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok

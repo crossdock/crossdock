@@ -1,16 +1,18 @@
 project := crossdock
 
+export GO15VENDOREXPERIMENT=1
+
 
 .PHONY: install
 install:
 	glide --version || go get github.com/Masterminds/glide
-	GO15VENDOREXPERIMENT=1 glide install
-	GO15VENDOREXPERIMENT=1 go build `glide novendor`
+	glide install
+	go build `glide novendor`
 
 
 .PHONY: test
 test:
-	GO15VENDOREXPERIMENT=1 go test `glide novendor`
+	go test `glide novendor`
 
 
 .PHONY: crossdock
@@ -35,7 +37,7 @@ run:
 
 .PHONY: scratch
 scratch:
-	GO15VENDOREXPERIMENT=1 CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `GO15VENDOREXPERIMENT=1 glide novendor`
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
 	docker build -f Dockerfile.scratch -t scratch-crossdock .
 	docker run scratch-crossdock
 

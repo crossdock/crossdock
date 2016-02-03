@@ -15,18 +15,30 @@ yarpc-go:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-java:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-python:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-node:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
