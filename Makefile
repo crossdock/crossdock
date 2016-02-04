@@ -1,4 +1,4 @@
-project := xlang
+project := crossdock
 
 export GO15VENDOREXPERIMENT=1
 
@@ -15,29 +15,29 @@ test:
 	go test `glide novendor`
 
 
-.PHONY: xlang
-xlang:
-	docker-compose run xlang
+.PHONY: crossdock
+crossdock:
+	docker-compose run crossdock
 
 
-.PHONY: xlang-fresh
-xlang-fresh:
+.PHONY: crossdock-fresh
+crossdock-fresh:
 	docker-compose kill
 	docker-compose rm -f
 	docker-compose pull
 	docker-compose build
-	docker-compose run xlang
+	docker-compose run crossdock
 
 
 .PHONY: run
 run:
-	docker-compose build xlang
-	docker-compose run xlang
+	docker-compose build crossdock
+	docker-compose run crossdock
 
 
 .PHONY: scratch
 scratch:
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
-	docker build -f Dockerfile.scratch -t scratch-xlang .
-	docker run scratch-xlang
+	docker build -f Dockerfile.scratch -t scratch-crossdock .
+	docker run scratch-crossdock
 

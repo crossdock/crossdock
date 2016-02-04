@@ -1,17 +1,17 @@
 [← Write Test Client](write-test-client.md)
 
-# Run Xlang
+# Run Crossdock
 
-To run xlang, we'll need to configure our `docker-compose.yml`:
+To run Crossdock, we'll need to configure our `docker-compose.yml`:
 
 ```yml
-xlang:
-    image: yarpc/xlang
+crossdock:
+    image: yarpc/crossdock
     links:
         - client
     environment:
-        - XLANG_CLIENTS=client
-        - XLANG_DIMENSION_BEHAVIOR=dance,run
+        - CROSSDOCK_CLIENTS=client
+        - CROSSDOCK_AXIS_BEHAVIOR=dance,run
 
 client:
     build: .
@@ -19,11 +19,11 @@ client:
         - 8080
 ```
 
-In the configuration above, the `xlang:` entry can be read as:
+In the configuration above, the `crossdock:` entry can be read as:
 
-> Define a container named xlang that runs the [yarpc/xlang](https://hub.docker.com/r/yarpc/xlang/) image,
+> Define a container named crossdock that runs the [yarpc/crossdock](https://hub.docker.com/r/yarpc/crossdock/) image,
 > assigns our Test Client as a runtime dependency,
-> and defines a custom Dimension "behavior".
+> and defines a custom Axis "behavior".
 
 And the `client:` entry can be read as:
 
@@ -37,10 +37,10 @@ FROM golang:onbuild
 EXPOSE 8080
 ```
 
-Finally, we can call xlang:
+Finally, we can call Crossdock:
 
 ```
-$ docker-compose run xlang
+$ docker-compose run crossdock
 
 Beginning matrix of tests...
 
@@ -54,6 +54,6 @@ Beginning matrix of tests...
 The above output can be read as:
 
 > For every Test Client configured in our `docker-compose.yml` file,
-> xlang issued a test request to each for every Behavior defined.
+> Crossdock issued a test request to each for every Behavior defined.
 
 [Publish Test Client →](publish-test-client.md)

@@ -3,9 +3,9 @@ package main
 import "net/http"
 
 func main() {
-	// xlang makes all calls to http://<test-client>:8080/
+	// Crossdock makes all calls to http://<test-client>:8080/
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// custom arguments, called dimensions, are configured in
+		// custom arguments, called axis, are configured in
 		// docker-compose.yml and then passed as query params like so:
 		// http://<test-client>:8080/?behavior=dance
 		behavior := r.FormValue("behavior")
@@ -16,9 +16,9 @@ func main() {
 			return
 		}
 
-		// once the client is ready, xlang will make an HTTP request
-		// to / with dimensions you defined in docker-compose.yml,
-		// in this case, we've defined XLANG_DIMENSION_BEHAVIOR
+		// once the client is ready, Crossdock will make an HTTP request
+		// to / with axis you defined in docker-compose.yml,
+		// in this case, we've defined CROSSDOCK_AXIS_BEHAVIOR
 		switch behavior {
 
 		// we've recieved a request asking us to test the "dance" behavior,
@@ -35,7 +35,7 @@ func main() {
 
 		default:
 			// give a 404 when test is not implemented,
-			// xlang will mark every 404 test case as "skipped"
+			// Crossdock will mark every 404 test case as "skipped"
 			http.NotFound(w, r)
 		}
 	})

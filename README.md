@@ -1,31 +1,31 @@
-# Xlang [![Build Status](https://travis-ci.org/yarpc/xlang.svg?branch=master)](https://travis-ci.org/yarpc/xlang)
+# Crossdock [![Build Status](https://travis-ci.org/yarpc/crossdock.svg?branch=master)](https://travis-ci.org/yarpc/crossdock)
 
-A 2mb Docker appliance for running cross-repo integration tests; Xlang is:
+A 2mb Docker appliance for running cross-repo integration tests; Crossdock is:
 
 * Portable - runs anywhere Docker is installed, eg Travis & locally.
 * General - can be used to test sets of libraries and microservices.
-* Flexible - test all combinations of behaviors using custom matrix dimensions.
-* Decentralized - each repo can configure and run Xlang independently from the others.
-* Light - run Xlang for every commit on every repo in parallel.
+* Flexible - test all combinations of behaviors using custom matrix axis.
+* Decentralized - each repo can configure and run Crossdock independently from the others.
+* Light - run Crossdock for every commit on every repo in parallel.
 * Easy - run integration tests on a large project without installing every component.
 
 ## How It Works
 
-Xlang is [published in Docker Hub](https://hub.docker.com/r/yarpc/xlang/) and is
+Crossdock is [published in Docker Hub](https://hub.docker.com/r/yarpc/crossdock/) and is
 meant to be used with [Docker Compose](https://docs.docker.com/compose/) directly from your repos.
 
 Given the following `docker-compose.yml`:
 
 ```yml
-xlang:
-    image: yarpc/xlang
+crossdock:
+    image: yarpc/crossdock
     links:
         - alpha
         - omega
     environment:
-        - XLANG_CLIENTS=alpha,omega
-        - XLANG_DIMENSION_BEHAVIOR=dance,run
-        - XLANG_DIMENSION_SPEED=fast,slow
+        - CROSSDOCK_CLIENTS=alpha,omega
+        - CROSSDOCK_AXIS_BEHAVIOR=dance,run
+        - CROSSDOCK_AXIS_SPEED=fast,slow
 
 alpha:
     image: breerly/hello-server
@@ -44,11 +44,11 @@ omega:
         - HELLO_MESSAGE=ok
 ```
 
-Running Xlang will initiate tests for clients `alpha` and `omega` for
+Running Crossdock will initiate tests for clients `alpha` and `omega` for
 every combination of `behavior` and `speed`:
 
 ```
-$ docker-compose run xlang
+$ docker-compose run crossdock
 
 Beginning matrix of tests...
 
@@ -67,9 +67,8 @@ Beginning matrix of tests...
 ## How To Use
 
 1. [Write Test Client](docs/write-test-client.md)
-2. [Run Xlang](docs/run-xlang.md)
+2. [Run Crossdock](docs/run-crossdock.md)
 3. [Publish Test Client](docs/publish-test-client.md)
 4. [Integrate Other Repos](docs/integrate-other-repos.md)
-5. [Add Other Test Dimensions](docs/add-other-dimensions.md)
+5. [Add Other Test Axis](docs/add-other-axis.md)
 6. [Run During Continuous Integration](docs/add-to-ci.md)
-

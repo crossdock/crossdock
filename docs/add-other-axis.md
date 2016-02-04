@@ -1,21 +1,20 @@
-[← Integrate Other Repos](integarte-other-repos.md)
+[← Integrate Other Repos](integrate-other-repos.md)
 
-# Add Additional Dimensions
+# Add Other Test Axis
 
-You can also add additional Dimensions to the integration test.
-
+You can also add additional Axis to the integration test.
 Let's update our `docker-compose.yml` file to include an additional Dimension:
 
 ```
 # ...
-- XLANG_DIMENSION_BEHAVIOR=dance,run
-- XLANG_DIMENSION_SPEED=fast,slow
+- CROSSDOCK_AXIS_BEHAVIOR=dance,run
+- CROSSDOCK_AXIS_SPEED=fast,slow
 ```
 
-Now run xlang:
+Now run Crossdock:
 
 ```
-$ docker-compose run xlang
+$ docker-compose run crossdock
 
 Beginning matrix of tests...
 

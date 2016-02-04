@@ -8,16 +8,16 @@ import (
 	"net/url"
 )
 
-// Dimension represents combinational args to be passed to the test clients
-type Dimension struct {
+// Axis represents combinational args to be passed to the test clients
+type Axis struct {
 	Name   string
 	Values []string
 }
 
 // Matrix describes the entirety of the test program
 type Matrix struct {
-	Clients    []string
-	Dimensions []Dimension
+	Clients []string
+	Axes    []Axis
 }
 
 // Result contains replies from test clients
