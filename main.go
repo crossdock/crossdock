@@ -8,7 +8,7 @@ import (
 func main() {
 	matrix := ReadMatrixFromEnviron()
 
-	fmt.Printf("Waiting on XLANG_CLIENTS=%v\n\n", matrix.Clients)
+	fmt.Printf("Waiting on CROSSDOCK_CLIENTS=%v\n\n", matrix.Clients)
 	Wait(matrix.Clients, time.Duration(30)*time.Second)
 
 	fmt.Println("Begining matrix of tests")
