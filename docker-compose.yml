@@ -1,4 +1,4 @@
-xlang:
+crossdock:
     build: .
     links:
         - yarpc-go
@@ -6,10 +6,10 @@ xlang:
         - yarpc-python
         - yarpc-node
     environment:
-        - XLANG_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - XLANG_DIMENSION_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - XLANG_DIMENSION_BEHAVIOR=call,not_found
-        - XLANG_DIMENSION_TRANSPORT=tchannel,http
+        - CROSSDOCK_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
+        - CROSSDOCK_AXIS_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node
+        - CROSSDOCK_AXIS_BEHAVIOR=call,not_found
+        - CROSSDOCK_AXIS_TRANSPORT=tchannel,http
 
 yarpc-go:
     image: breerly/hello-server
@@ -17,18 +17,29 @@ yarpc-go:
         - 8080
     environment:
         - HELLO_SLEEP=10
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-java:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-python:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok
 
 yarpc-node:
     image: breerly/hello-server
     ports:
         - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_MESSAGE=ok

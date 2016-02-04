@@ -1,41 +1,43 @@
-project := xlang
+project := crossdock
+
+export GO15VENDOREXPERIMENT=1
 
 
 .PHONY: install
 install:
 	glide --version || go get github.com/Masterminds/glide
-	GO15VENDOREXPERIMENT=1 glide install
-	GO15VENDOREXPERIMENT=1 go build `glide novendor`
+	glide install
+	go build `glide novendor`
 
 
 .PHONY: test
 test:
-	GO15VENDOREXPERIMENT=1 go test `glide novendor`
+	go test `glide novendor`
 
 
-.PHONY: xlang
-xlang:
-	docker-compose run xlang
+.PHONY: crossdock
+crossdock:
+	docker-compose run crossdock
 
 
-.PHONY: xlang-fresh
-xlang-fresh:
+.PHONY: crossdock-fresh
+crossdock-fresh:
 	docker-compose kill
 	docker-compose rm -f
 	docker-compose pull
 	docker-compose build
-	docker-compose run xlang
+	docker-compose run crossdock
 
 
 .PHONY: run
 run:
-	docker-compose build xlang
-	docker-compose run xlang
+	docker-compose build crossdock
+	docker-compose run crossdock
 
 
 .PHONY: scratch
 scratch:
-	GO15VENDOREXPERIMENT=1 CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `GO15VENDOREXPERIMENT=1 glide novendor`
-	docker build -f Dockerfile.scratch -t scratch-xlang .
-	docker run scratch-xlang
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
+	docker build -f Dockerfile.scratch -t scratch-crossdock .
+	docker run scratch-crossdock
 

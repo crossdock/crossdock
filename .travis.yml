@@ -21,11 +21,11 @@ install:
 
 script:
   - make test
-  - make xlang-fresh
+  - make crossdock
 
 after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  - export REPO=yarpc/xlang
+  - export REPO=yarpc/crossdock
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
   - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
