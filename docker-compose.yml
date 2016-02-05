@@ -16,6 +16,7 @@ yarpc-go:
     ports:
         - 8080
     environment:
+        - HELLO_SLEEP=10
         - HELLO_PORT=8080
         - HELLO_MESSAGE=ok
 
