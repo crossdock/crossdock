@@ -37,7 +37,7 @@ run:
 
 .PHONY: scratch
 scratch:
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 	docker build -f Dockerfile.scratch -t scratch-crossdock .
 	docker run scratch-crossdock
 
