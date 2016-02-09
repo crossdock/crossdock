@@ -27,7 +27,7 @@ after_success:
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=yarpc/crossdock
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH; fi`
-  - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main `glide novendor`
+  - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
   - docker run $REPO:$COMMIT
   - docker images
