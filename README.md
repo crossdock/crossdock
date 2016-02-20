@@ -1,4 +1,4 @@
-# Crossdock [![Build Status](https://travis-ci.org/yarpc/crossdock.svg?branch=master)](https://travis-ci.org/yarpc/crossdock)
+# Crossdock [![Build Status](https://travis-ci.org/yarpc/crossdock.svg?branch=master)](https://travis-ci.org/yarpc/crossdock) [![](https://badge.imagelayers.io/yarpc/crossdock:latest.svg)](https://imagelayers.io/?images=yarpc/crossdock:latest 'Get your own badge on imagelayers.io')
 
 A 2mb Docker appliance for running cross-repo integration tests; Crossdock is:
 
