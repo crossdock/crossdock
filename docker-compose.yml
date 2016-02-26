@@ -5,9 +5,11 @@ crossdock:
         - yarpc-java
         - yarpc-python
         - yarpc-node
+        - yarpc-erlang
     environment:
-        - CROSSDOCK_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - CROSSDOCK_AXIS_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node
+        - CROSSDOCK_MAX_WAIT=10
+        - CROSSDOCK_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node,yarpc-erlang
+        - CROSSDOCK_AXIS_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node,yarpc-erlang
         - CROSSDOCK_AXIS_BEHAVIOR=call,not_found
         - CROSSDOCK_AXIS_TRANSPORT=tchannel,http
 
@@ -16,9 +18,9 @@ yarpc-go:
     ports:
         - 8080
     environment:
-        - HELLO_SLEEP=10
+        - HELLO_SLEEP=1
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE='[{"status":"passed","output":"hi"}]'
 
 yarpc-java:
     image: breerly/hello-server
@@ -26,7 +28,7 @@ yarpc-java:
         - 8080
     environment:
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE='[{"status":"skipped","output":"hi"}]'
 
 yarpc-python:
     image: breerly/hello-server
@@ -34,7 +36,7 @@ yarpc-python:
         - 8080
     environment:
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE='[{"status":"failed","output":"hi"}]'
 
 yarpc-node:
     image: breerly/hello-server
@@ -42,4 +44,12 @@ yarpc-node:
         - 8080
     environment:
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE='ok - not agreed format'
+
+yarpc-erlang:
+    image: breerly/hello-server
+    ports:
+        - 8080
+    environment:
+        - HELLO_PORT=8080
+        - HELLO_STATUS_CODE=404
