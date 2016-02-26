@@ -1,15 +1,15 @@
-package main
+package plan
 
 import (
 	"os"
 	"strings"
 )
 
-const clientsKey = "CROSSDOCK_CLIENTS"
-const axisKeyPrefix = "CROSSDOCK_AXIS_"
+// ReadConfigFromEnviron creates a Config by looking for CROSSDOCK_ environment vars
+func ReadConfigFromEnviron() Config {
+	const clientsKey = "CROSSDOCK_CLIENTS"
+	const axisKeyPrefix = "CROSSDOCK_AXIS_"
 
-// ReadMatrixFromEnviron creates a Matrix by looking for CROSSDOCK_ environment vars
-func ReadMatrixFromEnviron() Matrix {
 	clients := strings.Split(os.Getenv(clientsKey), ",")
 	var axes []Axis
 
@@ -30,10 +30,10 @@ func ReadMatrixFromEnviron() Matrix {
 		axes = append(axes, axis)
 	}
 
-	matrix := Matrix{
+	config := Config{
 		Clients: clients,
 		Axes:    axes,
 	}
 
-	return matrix
+	return config
 }

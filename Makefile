@@ -15,15 +15,19 @@ test:
 	go test `glide novendor`
 
 
+.PHONY: clean
+clean:
+	docker-compose kill
+	docker-compose rm -f
+
+
 .PHONY: crossdock
 crossdock:
 	docker-compose run crossdock
 
 
 .PHONY: crossdock-fresh
-crossdock-fresh:
-	docker-compose kill
-	docker-compose rm -f
+crossdock-fresh: clean
 	docker-compose pull
 	docker-compose build
 	docker-compose run crossdock
