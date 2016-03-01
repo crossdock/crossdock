@@ -25,8 +25,10 @@ script:
 
 after_success:
   - export REPO=yarpc/crossdock
-  - export BRANCH=`git name-rev --name-only HEAD`
+  - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export TAG=`if [ "$BRANCH" == "master" ]; then echo "latest"; else echo $BRANCH; fi`
+  - echo "REPO=$REPO, PR=$PR, BRANCH=$BRANCH, TAG=$TAG"
   - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
