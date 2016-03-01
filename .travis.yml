@@ -24,10 +24,10 @@ script:
   - make crossdock
 
 after_success:
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=yarpc/crossdock
   - export BRANCH=`git name-rev --name-only HEAD`
   - export TAG=`if [ "$BRANCH" == "master" ]; then echo "latest"; else echo $BRANCH; fi`
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
   - docker build -f Dockerfile.scratch -t $REPO:$COMMIT .
   - docker run $REPO:$COMMIT
