@@ -1,45 +1,25 @@
 crossdock:
     build: .
     links:
-        - yarpc-go
-        - yarpc-java
-        - yarpc-python
-        - yarpc-node
+        - alpha
+        - omega
     environment:
-        - CROSSDOCK_CLIENTS=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - CROSSDOCK_AXIS_SERVER=yarpc-go,yarpc-java,yarpc-python,yarpc-node
-        - CROSSDOCK_AXIS_BEHAVIOR=call,not_found
-        - CROSSDOCK_AXIS_TRANSPORT=tchannel,http
+        - CROSSDOCK_CLIENTS=alpha,omega
+        - CROSSDOCK_AXIS_BEHAVIOR=dance,sing
 
-yarpc-go:
+alpha:
     image: breerly/hello-server
     ports:
         - 8080
     environment:
-        - HELLO_SLEEP=10
+        - HELLO_SLEEP=1
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE=[{"status":"passed","output":"sup"}]
 
-yarpc-java:
-    image: breerly/hello-server
-    ports:
-        - 8080
-    environment:
-        - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
-
-yarpc-python:
+omega:
     image: breerly/hello-server
     ports:
         - 8080
     environment:
         - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
-
-yarpc-node:
-    image: breerly/hello-server
-    ports:
-        - 8080
-    environment:
-        - HELLO_PORT=8080
-        - HELLO_MESSAGE=ok
+        - HELLO_MESSAGE=[{"status":"skipped","output":"sup"}]

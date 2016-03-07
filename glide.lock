@@ -1,5 +1,5 @@
-hash: 1cb98adc4140838609b5685953421627288799f2f02103d8be745f11bd9bc5c5
-updated: 2016-02-01T19:12:21.717334798-08:00
+hash: 4aabe10da3f81464d7b64fd3569137cc8a908abe76020127ab9fa690eaca5c52
+updated: 2016-02-26T13:06:18.735487753-08:00
 imports:
 - name: github.com/davecgh/go-spew
   version: 2df174808ee097f90d259e432cc04442cf60be21
@@ -9,6 +9,8 @@ imports:
   version: e882a96ec18dd43fa283187b66af74497c9101c0
 - name: github.com/olekukonko/tablewriter
   version: cca8bbc0798408af109aaaa239cbd2634846b340
+- name: github.com/orchestrate-io/dvr
+  version: adafdc8de746d2a490c15a8ab8704c6110a0dcd6
 - name: github.com/pmezard/go-difflib
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
