@@ -11,6 +11,8 @@ func ReadConfigFromEnviron() Config {
 	const axisKeyPrefix = "CROSSDOCK_AXIS_"
 
 	clients := strings.Split(os.Getenv(clientsKey), ",")
+	clients = trimCollection(clients)
+
 	var axes []Axis
 
 	for _, e := range os.Environ() {
@@ -21,11 +23,12 @@ func ReadConfigFromEnviron() Config {
 
 		pair := strings.SplitN(d, "=", 2)
 		key := strings.ToLower(pair[0])
-		value := strings.Split(pair[1], ",")
+		values := strings.Split(pair[1], ",")
+		values = trimCollection(values)
 
 		axis := Axis{
 			Name:   key,
-			Values: value,
+			Values: values,
 		}
 		axes = append(axes, axis)
 	}
@@ -36,4 +39,12 @@ func ReadConfigFromEnviron() Config {
 	}
 
 	return config
+}
+
+func trimCollection(in []string) []string {
+	ret := make([]string, len(in))
+	for i, v := range in {
+		ret[i] = strings.Trim(v, " ")
+	}
+	return ret
 }
