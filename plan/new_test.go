@@ -7,15 +7,13 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	config := &Config{
+	plan := New(&Config{
 		Clients: []string{"alpha", "omega"},
 		Axes: []Axis{{
 			Name:   "behavior",
 			Values: []string{"dance", "sing"},
 		}},
-	}
-	plan := New(config)
-
+	})
 	assert.Equal(t,
 		[]TestCase{
 			{
