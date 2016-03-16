@@ -20,8 +20,7 @@ func ReadConfigFromEnviron() *Config {
 	if callDeadline == 0 {
 		callDeadline = callDeadlineDefault
 	}
-	clients := strings.Split(os.Getenv(clientsKey), ",")
-
+	clients := trimCollection(strings.Split(os.Getenv(clientsKey), ","))
 	var axes []Axis
 	for _, e := range os.Environ() {
 		if !strings.HasPrefix(e, axisKeyPrefix) {
@@ -31,20 +30,27 @@ func ReadConfigFromEnviron() *Config {
 
 		pair := strings.SplitN(d, "=", 2)
 		key := strings.ToLower(pair[0])
-		value := strings.Split(pair[1], ",")
+		values := strings.Split(pair[1], ",")
+		values = trimCollection(values)
 
 		axis := Axis{
 			Name:   key,
-			Values: value,
+			Values: values,
 		}
 		axes = append(axes, axis)
 	}
-
 	config := &Config{
 		CallDeadline: time.Duration(callDeadline),
 		Clients:      clients,
 		Axes:         axes,
 	}
-
 	return config
+}
+
+func trimCollection(in []string) []string {
+	ret := make([]string, len(in))
+	for i, v := range in {
+		ret[i] = strings.Trim(v, " ")
+	}
+	return ret
 }
