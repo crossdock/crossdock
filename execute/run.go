@@ -7,10 +7,10 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/yarpc/crossdock/plan"
+
 	"golang.org/x/net/context"
 	"golang.org/x/net/context/ctxhttp"
-
-	"github.com/yarpc/crossdock/plan"
 )
 
 // Run the test program for a given Plan
