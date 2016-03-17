@@ -7,18 +7,18 @@ import (
 	"time"
 )
 
-const callDeadlineDefault = 5
+const defaultCallTimeout = 5
 
 // ReadConfigFromEnviron creates a Config by looking for CROSSDOCK_ environment vars
 func ReadConfigFromEnviron() *Config {
 	const (
-		callDeadlineKey = "CROSSDOCK_CALL_DEADLINE"
-		clientsKey      = "CROSSDOCK_CLIENTS"
-		axisKeyPrefix   = "CROSSDOCK_AXIS_"
+		callTimeoutKey = "CROSSDOCK_CALL_TIMEOUT"
+		clientsKey     = "CROSSDOCK_CLIENTS"
+		axisKeyPrefix  = "CROSSDOCK_AXIS_"
 	)
-	callDeadline, _ := strconv.Atoi(os.Getenv(callDeadlineKey))
-	if callDeadline == 0 {
-		callDeadline = callDeadlineDefault
+	callTimeout, _ := strconv.Atoi(os.Getenv(callTimeoutKey))
+	if callTimeout == 0 {
+		callTimeout = defaultCallTimeout
 	}
 	clients := trimCollection(strings.Split(os.Getenv(clientsKey), ","))
 	var axes []Axis
@@ -40,9 +40,9 @@ func ReadConfigFromEnviron() *Config {
 		axes = append(axes, axis)
 	}
 	config := &Config{
-		CallDeadline: time.Duration(callDeadline),
-		Clients:      clients,
-		Axes:         axes,
+		CallTimeout: time.Duration(callTimeout),
+		Clients:     clients,
+		Axes:        axes,
 	}
 	return config
 }

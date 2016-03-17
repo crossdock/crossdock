@@ -4,9 +4,9 @@ import "time"
 
 // Config describes the unstructured test plan
 type Config struct {
-	CallDeadline time.Duration
-	Clients      []string
-	Axes         []Axis
+	CallTimeout time.Duration
+	Clients     []string
+	Axes        []Axis
 }
 
 // Axis represents combinational args to be passed to the test clients

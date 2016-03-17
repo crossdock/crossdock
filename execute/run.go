@@ -67,7 +67,7 @@ func makeRequest(testCase plan.TestCase) ([]byte, error) {
 	callURL.RawQuery = args.Encode()
 
 	ctx, _ := context.WithTimeout(
-		context.Background(), testCase.Plan.Config.CallDeadline*time.Second)
+		context.Background(), testCase.Plan.Config.CallTimeout*time.Second)
 	resp, err := ctxhttp.Get(ctx, nil, callURL.String())
 	if err != nil {
 		return []byte(""), err
