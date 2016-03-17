@@ -1,24 +1,27 @@
 package plan
 
 // New creates a Plan given a Config
-func New(config Config) Plan {
-	return Plan{
-		TestCases: buildTestCases(config),
+func New(config *Config) *Plan {
+	plan := &Plan{
+		Config: config,
 	}
+	plan.TestCases = buildTestCases(plan)
+	return plan
 }
 
-func buildTestCases(config Config) []TestCase {
+func buildTestCases(plan *Plan) []TestCase {
 	var testCases []TestCase
-	for _, client := range config.Clients {
-		combos := recurseCombinations(client, config.Axes, make(map[string]string))
+	for _, client := range plan.Config.Clients {
+		combos := recurseCombinations(plan, client, plan.Config.Axes, make(map[string]string))
 		testCases = append(testCases, combos...)
 	}
 	return testCases
 }
 
-func recurseCombinations(client string, axes []Axis, args Arguments) []TestCase {
+func recurseCombinations(plan *Plan, client string, axes []Axis, args Arguments) []TestCase {
 	if len(axes) == 0 {
 		return []TestCase{{
+			Plan:      plan,
 			Client:    client,
 			Arguments: copyArgs(args),
 		}}
@@ -27,7 +30,7 @@ func recurseCombinations(client string, axes []Axis, args Arguments) []TestCase 
 	axis := axes[0]
 	for _, p := range axis.Values {
 		args[axis.Name] = p
-		testCases = append(testCases, recurseCombinations(client, axes[1:], args)...)
+		testCases = append(testCases, recurseCombinations(plan, client, axes[1:], args)...)
 	}
 	return testCases
 }

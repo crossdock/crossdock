@@ -2,19 +2,26 @@ package plan
 
 import (
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
+const defaultCallTimeout = 5
+
 // ReadConfigFromEnviron creates a Config by looking for CROSSDOCK_ environment vars
-func ReadConfigFromEnviron() Config {
-	const clientsKey = "CROSSDOCK_CLIENTS"
-	const axisKeyPrefix = "CROSSDOCK_AXIS_"
-
-	clients := strings.Split(os.Getenv(clientsKey), ",")
-	clients = trimCollection(clients)
-
+func ReadConfigFromEnviron() *Config {
+	const (
+		callTimeoutKey = "CROSSDOCK_CALL_TIMEOUT"
+		clientsKey     = "CROSSDOCK_CLIENTS"
+		axisKeyPrefix  = "CROSSDOCK_AXIS_"
+	)
+	callTimeout, _ := strconv.Atoi(os.Getenv(callTimeoutKey))
+	if callTimeout == 0 {
+		callTimeout = defaultCallTimeout
+	}
+	clients := trimCollection(strings.Split(os.Getenv(clientsKey), ","))
 	var axes []Axis
-
 	for _, e := range os.Environ() {
 		if !strings.HasPrefix(e, axisKeyPrefix) {
 			continue
@@ -32,12 +39,11 @@ func ReadConfigFromEnviron() Config {
 		}
 		axes = append(axes, axis)
 	}
-
-	config := Config{
-		Clients: clients,
-		Axes:    axes,
+	config := &Config{
+		CallTimeout: time.Duration(callTimeout),
+		Clients:     clients,
+		Axes:        axes,
 	}
-
 	return config
 }
 

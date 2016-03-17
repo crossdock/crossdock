@@ -4,14 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/yarpc/crossdock/plan"
+
+	"golang.org/x/net/context"
+	"golang.org/x/net/context/ctxhttp"
 )
 
 // Run the test program for a given Plan
-func Run(plan plan.Plan) <-chan TestResponse {
+func Run(plan *plan.Plan) <-chan TestResponse {
 	tests := make(chan TestResponse, 100)
 	go func() {
 		for _, c := range plan.TestCases {
@@ -63,7 +66,9 @@ func makeRequest(testCase plan.TestCase) ([]byte, error) {
 	}
 	callURL.RawQuery = args.Encode()
 
-	resp, err := http.Get(callURL.String())
+	ctx, _ := context.WithTimeout(
+		context.Background(), testCase.Plan.Config.CallTimeout*time.Second)
+	resp, err := ctxhttp.Get(ctx, nil, callURL.String())
 	if err != nil {
 		return []byte(""), err
 	}

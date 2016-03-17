@@ -5,3 +5,6 @@ import:
   subpackages:
   - assert
 - package: github.com/orchestrate-io/dvr
+- package: golang.org/x/net
+  subpackages:
+  - context
