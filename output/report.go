@@ -18,43 +18,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package output
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"time"
 
 	"github.com/yarpc/crossdock/execute"
-	"github.com/yarpc/crossdock/output"
-	"github.com/yarpc/crossdock/plan"
 )
 
-func main() {
-	fmt.Printf("\nCrossdock starting...\n\n")
+// Reporter is responsible for outputting test results
+type Reporter interface {
+	Stream(tests <-chan execute.TestResponse) Summary
+}
 
-	config, err := plan.ReadConfigFromEnviron()
-	if err != nil {
-		log.Fatal(err)
+// ReporterFunc streams test results to the console
+type ReporterFunc func(tests <-chan execute.TestResponse) Summary
+
+// Stream allows ReporterFunc to fulfill the Reporter interface
+func (f ReporterFunc) Stream(tests <-chan execute.TestResponse) Summary {
+	return f(tests)
+}
+
+// GetReporter returns a ReporterFunc for the given name
+func GetReporter(name string) (Reporter, error) {
+	// default reporter
+	if name == "" {
+		return List, nil
 	}
-	plan := plan.New(config)
-
-	fmt.Printf("Waiting on WAIT_FOR=%v\n\n", plan.Config.WaitForHosts)
-	execute.Wait(plan.Config.WaitForHosts, time.Duration(30)*time.Second)
-
-	fmt.Printf("\nExecuting Matrix...\n\n")
-	results := execute.Run(plan)
-
-	reporter, err := output.GetReporter(config.Report)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	summary := reporter.Stream(results)
-	output.Summarize(summary)
-
-	if summary.Failed == true {
-		os.Exit(1)
+	// else a specific value was provided
+	switch name {
+	case "list":
+		return List, nil
+	default:
+		return nil, fmt.Errorf("%v is not a valid reporter", name)
 	}
 }

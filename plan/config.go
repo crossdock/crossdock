@@ -33,17 +33,19 @@ const defaultCallTimeout = 5
 // ReadConfigFromEnviron creates a Config by looking for environment variables
 func ReadConfigFromEnviron() (*Config, error) {
 	const (
+		reportKey         = "REPORT"
 		callTimeoutKey    = "CALL_TIMEOUT"
 		waitKey           = "WAIT_FOR"
 		axisKeyPrefix     = "AXIS_"
 		behaviorKeyPrefix = "BEHAVIOR_"
 	)
+
 	callTimeout, _ := strconv.Atoi(os.Getenv(callTimeoutKey))
 	if callTimeout == 0 {
 		callTimeout = defaultCallTimeout
 	}
 
-	WaitForHosts := trimCollection(strings.Split(os.Getenv(waitKey), ","))
+	waitForHosts := trimCollection(strings.Split(os.Getenv(waitKey), ","))
 	axes := make(map[string]Axis)
 	behaviors := make(map[string]Behavior)
 	for _, e := range os.Environ() {
@@ -56,8 +58,9 @@ func ReadConfigFromEnviron() (*Config, error) {
 		}
 	}
 	config := &Config{
+		Report:       strings.ToLower(os.Getenv(reportKey)),
 		CallTimeout:  time.Duration(callTimeout),
-		WaitForHosts: WaitForHosts,
+		WaitForHosts: waitForHosts,
 		Axes:         axes,
 		Behaviors:    behaviors,
 	}

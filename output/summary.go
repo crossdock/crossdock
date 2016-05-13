@@ -20,62 +20,28 @@
 
 package output
 
-import (
-	"fmt"
-
-	"github.com/yarpc/crossdock/execute"
-
-	"github.com/fatih/color"
-)
-
-var green = color.New(color.FgGreen).SprintFunc()
-var yellow = color.New(color.FgYellow).SprintFunc()
-var red = color.New(color.FgRed).SprintFunc()
+import "fmt"
 
 // Summary contains an account of the test run
 type Summary struct {
 	Failed bool
 
-	SuccessAmount int
-	FailAmount    int
-	SkippedAmount int
-}
-
-// Stream results to the console, error at end if any fail
-func Stream(tests <-chan execute.TestResponse) Summary {
-	var summary Summary
-	for test := range tests {
-		for _, result := range test.Results {
-			var statStr string
-			switch result.Status {
-			case execute.Success:
-				statStr = green("✓")
-				summary.SuccessAmount++
-			case execute.Skipped:
-				statStr = yellow("S")
-				summary.SkippedAmount++
-			default:
-				statStr = red("F")
-				summary.Failed = true
-				summary.FailAmount++
-			}
-			fmt.Printf("%v - %v - %v\n", statStr, test.TestCase, result.Output)
-		}
-	}
-	return summary
+	NumSuccess int
+	NumFail    int
+	NumSkipped int
 }
 
 // Summarize outputs the summary to the console
 func Summarize(summary Summary) {
 	fmt.Println("")
-	if summary.SuccessAmount > 0 {
-		fmt.Printf("%v passed\n", summary.SuccessAmount)
+	if summary.NumSuccess > 0 {
+		fmt.Printf("%v passed\n", summary.NumSuccess)
 	}
-	if summary.FailAmount > 0 {
-		fmt.Printf("%v failed\n", summary.FailAmount)
+	if summary.NumFail > 0 {
+		fmt.Printf("%v failed\n", summary.NumFail)
 	}
-	if summary.SkippedAmount > 0 {
-		fmt.Printf("%v skipped\n", summary.SkippedAmount)
+	if summary.NumSkipped > 0 {
+		fmt.Printf("%v skipped\n", summary.NumSkipped)
 	}
 
 	if summary.Failed == true {
