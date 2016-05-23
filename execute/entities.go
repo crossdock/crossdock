@@ -20,7 +20,11 @@
 
 package execute
 
-import "github.com/yarpc/crossdock/plan"
+import (
+	"fmt"
+
+	"github.com/yarpc/crossdock/plan"
+)
 
 // TestResponse contains the reply from a test client, most importantly,
 // contains a list of Results for the test cases ran by the test client
@@ -48,3 +52,20 @@ const (
 	// Skipped indicates a client' TestCase did not run
 	Skipped
 )
+
+func (s Status) String() string {
+	switch s {
+	case Success:
+		return "success"
+	case Failed:
+		return "failed"
+	case Skipped:
+		return "skipped"
+	default:
+		return fmt.Sprintf("Status(%v)", s)
+	}
+}
+
+func (s Status) MarshalText() ([]byte, error) {
+	return []byte(s.String()), nil
+}
