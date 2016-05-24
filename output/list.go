@@ -33,26 +33,29 @@ var green = color.New(color.FgGreen).SprintFunc()
 var yellow = color.New(color.FgYellow).SprintFunc()
 var red = color.New(color.FgRed).SprintFunc()
 
-// List is a ReporterFunc that produces a verbose list of results
-var List ReporterFunc = func(config *plan.Config, tests <-chan execute.TestResponse) Summary {
-	var summary Summary
-	for test := range tests {
-		for _, result := range test.Results {
-			var statStr string
-			switch result.Status {
-			case execute.Success:
-				statStr = green("✓")
-				summary.NumSuccess++
-			case execute.Skipped:
-				statStr = yellow("S")
-				summary.NumSkipped++
-			default:
-				statStr = red("F")
-				summary.Failed = true
-				summary.NumFail++
-			}
-			fmt.Printf("%v - %v - %v\n", statStr, test.TestCase, result.Output)
+type list struct{}
+
+var List list
+
+func (list) Start(config *plan.Config) error {
+	return nil
+}
+
+func (list) Next(test execute.TestResponse) {
+	for _, result := range test.Results {
+		var statStr string
+		switch result.Status {
+		case execute.Success:
+			statStr = green("✓")
+		case execute.Skipped:
+			statStr = yellow("S")
+		default:
+			statStr = red("F")
 		}
+		fmt.Printf("%v - %v - %v\n", statStr, test.TestCase, result.Output)
 	}
-	return summary
+}
+
+func (list) End() error {
+	return nil
 }

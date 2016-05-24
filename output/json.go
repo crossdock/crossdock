@@ -2,6 +2,7 @@ package output
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/yarpc/crossdock/execute"
@@ -24,10 +25,17 @@ type JSONReport struct {
 	Behaviors map[string]*JSONBehaviorReport `json:"behaviors"`
 }
 
-var JSON ReporterFunc = func(config *plan.Config, tests <-chan execute.TestResponse) Summary {
-	summary := Summary{}
-	report := JSONReport{
-		Behaviors: make(map[string]*JSONBehaviorReport),
+type JSON struct {
+	report JSONReport
+	path   string
+}
+
+func (j *JSON) Start(config *plan.Config) error {
+	j.path = config.JSONReportPath
+	j.report.Behaviors = make(map[string]*JSONBehaviorReport)
+
+	if config.JSONReportPath == "" {
+		return fmt.Errorf("JSON_REPORT_PATH is a required environment variable for REPORT=json")
 	}
 
 	for _, behavior := range config.Behaviors {
@@ -35,37 +43,40 @@ var JSON ReporterFunc = func(config *plan.Config, tests <-chan execute.TestRespo
 			Tests:  make([]JSONTestReport, 0, 10),
 			Params: behavior.Params,
 		}
-		report.Behaviors[behavior.Name] = behaviorReport
+		j.report.Behaviors[behavior.Name] = behaviorReport
 	}
 
-	for test := range tests {
-		client := test.TestCase.Client
-		args := test.TestCase.Arguments
-		behavior := test.TestCase.Arguments["behavior"]
-		delete(args, "behavior")
-		behaviorReport := report.Behaviors[behavior]
-		if behaviorReport == nil {
-			continue
-		}
-		for _, result := range test.Results {
-			behaviorReport.Tests = append(behaviorReport.Tests, JSONTestReport{
-				Client:    client,
-				Arguments: args,
-				Status:    result.Status,
-				Output:    result.Output,
-			})
-		}
-	}
+	return nil
+}
 
-	data, err := json.Marshal(report)
+func (j *JSON) Next(test execute.TestResponse) {
+	client := test.TestCase.Client
+	args := test.TestCase.Arguments
+	behavior := test.TestCase.Arguments["behavior"]
+	delete(args, "behavior")
+	behaviorReport := j.report.Behaviors[behavior]
+	if behaviorReport == nil {
+		return
+	}
+	for _, result := range test.Results {
+		behaviorReport.Tests = append(behaviorReport.Tests, JSONTestReport{
+			Client:    client,
+			Arguments: args,
+			Status:    result.Status,
+			Output:    result.Output,
+		})
+	}
+}
+
+func (j *JSON) End() error {
+	data, err := json.Marshal(j.report)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	err = ioutil.WriteFile(config.JSONReportPath, data, 0644)
-	if err != nil {
-		panic(err)
+	if err = ioutil.WriteFile(j.path, data, 0644); err != nil {
+		return err
 	}
 
-	return summary
+	return nil
 }
