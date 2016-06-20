@@ -7,6 +7,7 @@ To run Crossdock, we'll need to configure our `docker-compose.yml`:
 ```yml
 crossdock:
     image: yarpc/crossdock
+    dns_search: .
     links:
         - client
     environment:
@@ -15,6 +16,7 @@ crossdock:
 
 client:
     build: .
+    dns_search: .
     ports:
         - 8080
 ```
