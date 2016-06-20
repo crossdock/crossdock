@@ -19,6 +19,7 @@ Given the following `docker-compose.yml`:
 ```yml
 crossdock:
     image: yarpc/crossdock
+    dns_search: .  # Ensures unified DNS config.
     links:
         - alpha
         - omega
@@ -33,6 +34,7 @@ crossdock:
 
 alpha:
     image: breerly/hello-server
+    dns_search: .
     ports:
         - 8080
     environment:
@@ -41,6 +43,7 @@ alpha:
 
 omega:
     image: breerly/hello-server
+    dns_search: .
     ports:
         - 8080
     environment:
