@@ -9,6 +9,7 @@ Let's add a new client to our `docker-compose.yml` now:
 ```yml
 crossdock:
     image: yarpc/crossdock
+    dns_search: .
     links:
         - client
         - newclient
@@ -18,11 +19,13 @@ crossdock:
 
 client:
     build: .
+    dns_search: .
     ports:
         - 8080
 
 newclient:
     image: breerly/hello-server
+    dns_search: .
     environment:
         - HELLO_PORT=8080
         - HELLO_MESSAGE=ok
