@@ -18,47 +18,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package output
 
 import (
 	"fmt"
-	"log"
-	"time"
+	"sort"
+	"strings"
 
 	"github.com/crossdock/crossdock/execute"
-	"github.com/crossdock/crossdock/output"
 	"github.com/crossdock/crossdock/plan"
+
+	"github.com/fatih/color"
 )
 
-func main() {
-	fmt.Printf("\nCrossdock starting...\n\n")
+var green = color.New(color.FgGreen).SprintFunc()
+var red = color.New(color.FgRed).SprintFunc()
+var blue = color.New(color.FgBlue).SprintFunc()
+var grey = color.New(color.FgBlack, color.Bold).SprintFunc()
 
-	config, err := plan.ReadConfigFromEnviron()
-	if err != nil {
-		log.Fatal(err)
+func statusToColoredSymbol(status execute.Status) string {
+	switch status {
+	case execute.Success:
+		return green("✓")
+	case execute.Skipped:
+		return grey("S")
+	default:
+		return red("✗")
 	}
+}
 
-	reporter, err := output.GetReporter(config.Reports)
-	if err != nil {
-		log.Fatal(err)
+func fmtTestCase(test plan.TestCase) string {
+	var argsList []string
+	var behavior string
+	for k, v := range test.Arguments {
+		if k == "behavior" {
+			behavior = v
+			continue
+		}
+		if k == "client" {
+			continue
+		}
+		argsList = append(argsList, fmt.Sprintf("%v=%v", k, v))
 	}
-
-	plan := plan.New(config)
-
-	if err := reporter.Start(plan); err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("\nWaiting on WAIT_FOR=%v\n\n", plan.Config.WaitForHosts)
-	execute.Wait(plan.Config.WaitForHosts, time.Duration(30)*time.Second)
-
-	fmt.Printf("\nExecuting Matrix...\n\n")
-	results := execute.Run(plan)
-
-	for test := range results {
-		reporter.Next(test)
-	}
-	if err := reporter.End(); err != nil {
-		log.Fatal(err)
-	}
+	sort.Strings(argsList)
+	return fmt.Sprintf("[%v] %v→ (%v)", behavior, test.Client,
+		strings.Join(argsList, " "))
 }

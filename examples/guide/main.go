@@ -30,9 +30,8 @@ func main() {
 		// http://<test-client>:8080/?behavior=dance
 		behavior := r.FormValue("behavior")
 
-		// when client is called with no arguments,
-		// report back with a 200 when ready to run tests
-		if behavior == "" {
+		// when method is HEAD, report back with a 200 when ready to run tests
+		if r.Method == "HEAD" {
 			return
 		}
 
