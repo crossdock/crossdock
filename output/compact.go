@@ -80,7 +80,7 @@ func (compact *Compact) Next(test execute.TestResponse) {
 		return
 	}
 
-	fmt.Printf("%v %v (%v/%v passed, %v/%v skipped)\n",
+	compact.printf("%v %v (%v/%v passed, %v/%v skipped)\n",
 		statusToColoredSymbol(bs.Status), fmtTestCase(test.TestCase),
 		bs.Passed, bs.Total-bs.Skipped, bs.Skipped, bs.Total)
 
