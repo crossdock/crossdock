@@ -45,6 +45,15 @@ func Run(plan *plan.Plan) <-chan TestResponse {
 }
 
 func executeTestCase(testCase plan.TestCase) TestResponse {
+	if testCase.Skip {
+		return TestResponse{
+			TestCase: testCase,
+			Results: []Result{{
+				Status: Skipped,
+				Output: fmt.Sprintf("Skipped (%s)", testCase.SkipReason),
+			}},
+		}
+	}
 	response, err := makeRequest(testCase)
 	if err != nil {
 		return TestResponse{

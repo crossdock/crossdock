@@ -20,6 +20,11 @@
 
 package plan
 
+import (
+	"fmt"
+	"strings"
+)
+
 // New creates a Plan given a Config
 func New(config *Config) *Plan {
 	plan := &Plan{
@@ -52,6 +57,15 @@ func buildTestCases(plan *Plan) []TestCase {
 				Plan:      plan,
 				Client:    client,
 				Arguments: testArgs,
+				Skip:      false,
+			}
+
+			for _, filter := range behavior.Filters {
+				if filter.Matches(testArgs) {
+					t.Skip = true
+					t.SkipReason = fmt.Sprintf("SKIP_%s=%s", strings.ToUpper(behavior.Name), strings.Join(filter.String(), "+"))
+					break
+				}
 			}
 			testCases = append(testCases, t)
 		}

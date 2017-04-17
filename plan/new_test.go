@@ -180,3 +180,155 @@ func TestNew(t *testing.T) {
 
 	assert.Equal(t, plan.TestCases, wanted)
 }
+
+func TestSkip(t *testing.T) {
+	plan := New(&Config{
+		WaitForHosts: []string{"alpha", "omega"},
+		Axes: Axes{
+			{Name: "client", Values: []string{"alpha", "omega"}},
+			{Name: "server", Values: []string{"alpha", "omega"}},
+			{Name: "transport", Values: []string{"http", "tchannel"}},
+		},
+		Behaviors: []Behavior{
+			{
+				Name:       "dance",
+				ClientAxis: "client",
+				ParamsAxes: []string{"server", "transport"},
+				Filters: []Filter{
+					Filter{
+						Matchers: []AxisMatcher{
+							AxisMatcher{
+								Name:  "client",
+								Value: "alpha",
+							},
+						},
+					},
+				},
+			},
+			{
+				Name:       "sing",
+				ClientAxis: "client",
+				ParamsAxes: []string{"server", "transport"},
+				Filters: []Filter{
+					Filter{
+						Matchers: []AxisMatcher{
+							AxisMatcher{
+								Name:  "client",
+								Value: "alpha",
+							},
+							AxisMatcher{
+								Name:  "server",
+								Value: "omega",
+							},
+						},
+					},
+				},
+			},
+			// Test Multiple filters
+			{
+				Name:       "run",
+				ClientAxis: "client",
+				ParamsAxes: []string{"server", "transport"},
+				Filters: []Filter{
+					Filter{
+						Matchers: []AxisMatcher{
+							AxisMatcher{
+								Name:  "client",
+								Value: "alpha",
+							},
+							AxisMatcher{
+								Name:  "server",
+								Value: "omega",
+							},
+						},
+					},
+					Filter{
+						Matchers: []AxisMatcher{
+							AxisMatcher{
+								Name:  "server",
+								Value: "alpha",
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	)
+
+	wanted := []TestCase{
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "dance",
+				"client": "alpha", "server": "alpha", "transport": "http"}, Skip: true, SkipReason: "SKIP_DANCE=client:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"transport": "http", "behavior": "dance",
+				"client": "omega", "server": "alpha"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "dance", "client": "alpha",
+				"server": "omega", "transport": "http"}, Skip: true, SkipReason: "SKIP_DANCE=client:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "dance", "client": "omega",
+				"server": "omega", "transport": "http"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "dance", "client": "alpha",
+				"server": "alpha", "transport": "tchannel"}, Skip: true, SkipReason: "SKIP_DANCE=client:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"client": "omega", "server": "alpha",
+				"transport": "tchannel", "behavior": "dance"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"server": "omega", "transport": "tchannel",
+				"behavior": "dance", "client": "alpha"}, Skip: true, SkipReason: "SKIP_DANCE=client:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"transport": "tchannel", "behavior": "dance",
+				"client": "omega", "server": "omega"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"client": "alpha", "server": "alpha",
+				"transport": "http", "behavior": "sing"}, Skip: false},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "omega",
+				"server": "alpha", "transport": "http"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "alpha",
+				"server": "omega", "transport": "http"}, Skip: true, SkipReason: "SKIP_SING=client:alpha+server:omega"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "omega",
+				"server": "omega", "transport": "http"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"server": "alpha", "transport": "tchannel",
+				"behavior": "sing", "client": "alpha"}, Skip: false},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "omega",
+				"server": "alpha", "transport": "tchannel"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "alpha",
+				"server": "omega", "transport": "tchannel"}, Skip: true, SkipReason: "SKIP_SING=client:alpha+server:omega"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "sing", "client": "omega",
+				"server": "omega", "transport": "tchannel"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"client": "alpha", "server": "alpha",
+				"transport": "http", "behavior": "run"}, Skip: true, SkipReason: "SKIP_RUN=server:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "run", "client": "omega",
+				"server": "alpha", "transport": "http"}, Skip: true, SkipReason: "SKIP_RUN=server:alpha"},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "run", "client": "alpha",
+				"server": "omega", "transport": "http"}, Skip: true, SkipReason: "SKIP_RUN=client:alpha+server:omega"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "run", "client": "omega",
+				"server": "omega", "transport": "http"}, Skip: false},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"server": "alpha", "transport": "tchannel",
+				"behavior": "run", "client": "alpha"}, Skip: true, SkipReason: "SKIP_RUN=server:alpha"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "run", "client": "omega",
+				"server": "alpha", "transport": "tchannel"}, Skip: true, SkipReason: "SKIP_RUN=server:alpha"},
+		TestCase{Plan: plan, Client: "alpha",
+			Arguments: TestClientArgs{"behavior": "run", "client": "alpha",
+				"server": "omega", "transport": "tchannel"}, Skip: true, SkipReason: "SKIP_RUN=client:alpha+server:omega"},
+		TestCase{Plan: plan, Client: "omega",
+			Arguments: TestClientArgs{"behavior": "run", "client": "omega",
+				"server": "omega", "transport": "tchannel"}, Skip: false}}
+
+	assert.Equal(t, wanted, plan.TestCases)
+}

@@ -21,6 +21,7 @@
 package plan
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -34,6 +35,7 @@ func TestReadConfigFromEnviron(t *testing.T) {
 	os.Setenv("AXIS_SERVER", "yarpc-go,yarpc-node")
 	os.Setenv("AXIS_TRANSPORT", "http,tchannel")
 	os.Setenv("BEHAVIOR_ECHO", "client,server,transport")
+	os.Setenv("SKIP_ECHO", "client:yarpc-go+transport:tchannel")
 	os.Setenv("CALL_TIMEOUT", "10s")
 	os.Setenv("WAIT_FOR_TIMEOUT", "20s")
 	defer os.Clearenv()
@@ -55,16 +57,31 @@ func TestReadConfigFromEnviron(t *testing.T) {
 		"tchannel",
 	}}
 
-	assert.Equal(t, config.Reports, []string{"list"})
+	assert.Equal(t, []string{"list"}, config.Reports)
 
-	assert.Equal(t, config.Axes, Axes{client, server, transport})
+	assert.Equal(t, Axes{client, server, transport}, config.Axes)
 
-	assert.Equal(t, config.Behaviors, Behaviors{
+	assert.Equal(t, Behaviors{
 		{
 			Name:       "echo",
 			ClientAxis: "client",
 			ParamsAxes: []string{"server", "transport"},
-		}})
+			Filters: []Filter{
+				Filter{
+					Matchers: []AxisMatcher{
+						AxisMatcher{
+							Name:  "client",
+							Value: "yarpc-go",
+						},
+						AxisMatcher{
+							Name:  "transport",
+							Value: "tchannel",
+						},
+					},
+				},
+			},
+		},
+	}, config.Behaviors)
 
 	assert.Equal(t, 10*time.Second, config.CallTimeout)
 
@@ -114,5 +131,142 @@ func TestParseBehavior(t *testing.T) {
 
 	for _, tt := range tests {
 		assert.Equal(t, tt.want, parseBehavior(tt.give))
+	}
+}
+
+func TestParseSkipBehavior(t *testing.T) {
+	tests := []struct {
+		give             string
+		desc             string
+		wantFilters      []Filter
+		wantBehaviorName string
+		wantError        error
+	}{
+		{
+			desc: "single filter",
+			give: "foo=client:c+server:b",
+			wantFilters: []Filter{
+				{
+					Matchers: []AxisMatcher{
+						AxisMatcher{
+							Name:  "client",
+							Value: "c",
+						},
+						AxisMatcher{
+							Name:  "server",
+							Value: "b",
+						},
+					},
+				},
+			},
+			wantBehaviorName: "foo",
+		},
+		{
+			desc: "multiple filters",
+			give: "x=a:b,c:d",
+			wantFilters: []Filter{
+				{
+					Matchers: []AxisMatcher{
+						AxisMatcher{
+							Name:  "a",
+							Value: "b",
+						},
+					},
+				},
+				{
+					Matchers: []AxisMatcher{
+						AxisMatcher{
+							Name:  "c",
+							Value: "d",
+						},
+					},
+				},
+			},
+			wantBehaviorName: "x",
+		},
+		{
+			desc: "single filter testing name separation",
+			give: "foo=client:weird:name+server:b",
+			wantFilters: []Filter{
+				{
+					Matchers: []AxisMatcher{
+						AxisMatcher{
+							Name:  "client",
+							Value: "weird:name",
+						},
+						AxisMatcher{
+							Name:  "server",
+							Value: "b",
+						},
+					},
+				},
+			},
+			wantBehaviorName: "foo",
+		},
+		{
+			desc:      "invalid: empty filter",
+			give:      "x=a:b,,c:d",
+			wantError: fmt.Errorf(`invalid matcher "" in input "x=a:b,,c:d" is not of form 'key:value'`),
+		},
+		{
+			desc:      "invalid filters",
+			give:      "x",
+			wantError: fmt.Errorf(`missing '=' in the input: "x"`),
+		},
+		{
+			desc:      "invalid filters",
+			give:      "",
+			wantError: fmt.Errorf(`missing '=' in the input: ""`),
+		},
+		{
+			desc:      "invalid filters",
+			give:      "  x    ",
+			wantError: fmt.Errorf(`missing '=' in the input: "  x    "`),
+		},
+		{
+			desc:      "invalid: empty matcher",
+			give:      "x=:",
+			wantError: fmt.Errorf(`invalid matcher ":": axis name and value are required`),
+		},
+		{
+			desc:      "invalid filters",
+			give:      "x=",
+			wantError: fmt.Errorf(`invalid matcher "" in input "x=" is not of form 'key:value'`),
+		},
+		{
+			desc:      "invalid filters",
+			give:      "x  =  ",
+			wantError: fmt.Errorf(`invalid matcher "  " in input "x  =  " is not of form 'key:value'`),
+		},
+		{
+			desc:      "invalid: empty matcher",
+			give:      "x= :",
+			wantError: fmt.Errorf(`invalid matcher " :": axis name and value are required`),
+		},
+		{
+			desc:      "invalid: empty matcher",
+			give:      "x=  :  ",
+			wantError: fmt.Errorf(`invalid matcher "  :  ": axis name and value are required`),
+		},
+		{
+			desc:      "invalid: empty matcher",
+			give:      "x=     :",
+			wantError: fmt.Errorf(`invalid matcher "     :": axis name and value are required`),
+		},
+	}
+
+	for _, tt := range tests {
+		behaviorName, filters, err := parseSkipBehavior(tt.give)
+		if tt.wantError != nil {
+			if assert.Error(t, err) {
+				assert.Equal(t, tt.wantError, err)
+			}
+		} else {
+			if assert.NoError(t, err) {
+				assert.Equal(t, tt.wantFilters, filters, tt.desc)
+				assert.Equal(t, tt.wantBehaviorName, behaviorName, tt.desc)
+			}
+		}
+
 	}
 }
